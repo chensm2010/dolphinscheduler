@@ -878,7 +878,8 @@ public class ProcessDefinitionService extends BaseDAGService {
         try {
             createProcessResult = createProcessDefinition(loginUser
                     ,currentProjectName,
-                    processDefinitionName + "_import_" + System.currentTimeMillis(),
+                    //processDefinitionName + "_import_" + System.currentTimeMillis(),
+                    processDefinitionName, // update by ceb_dlp_chensm
                     importProcessParam,
                     processMeta.getProcessDefinitionDescription(),
                     processMeta.getProcessDefinitionLocations(),

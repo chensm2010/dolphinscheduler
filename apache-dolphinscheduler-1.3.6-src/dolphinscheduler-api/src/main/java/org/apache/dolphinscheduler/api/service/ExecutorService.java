@@ -151,6 +151,57 @@ public class ExecutorService extends BaseService{
     }
 
     /**
+     * execute process instance by processName
+     * add by ceb_dlp_chensm
+     *
+     * @param loginUser             login user
+     * @param projectName           project name
+     * @param processDefinitionName   process Definition Name
+     * @param cronTime              cron time
+     * @param commandType           command type
+     * @param failureStrategy       failuer strategy
+     * @param startNodeList         start nodelist
+     * @param taskDependType        node dependency type
+     * @param warningType           warning type
+     * @param warningGroupId         notify group id
+     * @param receivers             receivers
+     * @param receiversCc           receivers cc
+     * @param processInstancePriority process instance priority
+     * @param workerGroup worker group name
+     * @param runMode run mode
+     * @param timeout               timeout
+     * @return execute process instance code
+     * @throws ParseException Parse Exception
+     */
+    public Map<String, Object> execProcessInstanceByPsName(User loginUser, String projectName,
+                                                   String processDefinitionName, String cronTime, CommandType commandType,
+                                                   FailureStrategy failureStrategy, String startNodeList,
+                                                   TaskDependType taskDependType, WarningType warningType, int warningGroupId,
+                                                   String receivers, String receiversCc, RunMode runMode,
+                                                   Priority processInstancePriority, String workerGroup, Integer timeout) throws ParseException {
+        Map<String, Object> result = new HashMap<>(5);
+        Project project = projectMapper.queryByName(projectName);
+        if (project == null) {
+            putMsg(result,Status.PROJECT_NOT_FOUNT);
+            return result;
+        }
+         ProcessDefinition processDefinition = processDefinitionMapper.verifyByDefineName(project.getId(),processDefinitionName);
+        if (processDefinition == null) {
+            putMsg(result,Status.PROCESS_DEFINE_NOT_EXIST);
+            return result;
+        }
+        result = this.execProcessInstance(loginUser,  projectName,
+                processDefinition.getId(),  cronTime,  commandType,
+                 failureStrategy,  startNodeList,
+                 taskDependType,  warningType,  warningGroupId,
+                 receivers,  receiversCc,  runMode,
+                 processInstancePriority,  workerGroup,  timeout);
+
+        return result;
+    }
+
+
+    /**
      * check whether master exists
      * @param result result
      * @return master exists return true , otherwise return false

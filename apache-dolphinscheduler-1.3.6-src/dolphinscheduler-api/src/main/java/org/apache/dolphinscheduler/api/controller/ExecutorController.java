@@ -201,5 +201,83 @@ public class ExecutorController extends BaseController {
         return returnDataList(result);
     }
 
+    /**
+     * execute process instance
+     * add by ceb_dlp_chensm 20210607
+     * 通过项目名+流程名，调起流程。
+     *
+     * @param loginUser               login user
+     * @param projectName             project name
+     * @param processDefinitionName     process definition name
+     * @param scheduleTime            schedule time
+     * @param failureStrategy         failure strategy
+     * @param startNodeList           start nodes list
+     * @param taskDependType          task depend type
+     * @param execType                execute type
+     * @param warningType             warning type
+     * @param warningGroupId          warning group id
+     * @param receivers               receivers
+     * @param receiversCc             receivers cc
+     * @param runMode                 run mode
+     * @param processInstancePriority process instance priority
+     * @param workerGroup             worker group
+     * @param timeout                 timeout
+     * @return start process result code
+     */
+    @ApiOperation(value = "startProcessInstanceByPsName", notes = "RUN_PROCESS_INSTANCE_NOTES")
+    @ApiImplicitParams({
+           // @ApiImplicitParam(name = "processDefinitionId", value = "PROCESS_DEFINITION_ID", required = true, dataType = "Int", example = "100"),
+            @ApiImplicitParam(name = "processDefinitionName", value = "PROCESS_DEFINITION_NAME", required = true, dataType = "String", example = "PS1"),
+            @ApiImplicitParam(name = "scheduleTime", value = "SCHEDULE_TIME", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "failureStrategy", value = "FAILURE_STRATEGY", required = true, dataType = "FailureStrategy"),
+            @ApiImplicitParam(name = "startNodeList", value = "START_NODE_LIST", dataType = "String"),
+            @ApiImplicitParam(name = "taskDependType", value = "TASK_DEPEND_TYPE", dataType = "TaskDependType"),
+            @ApiImplicitParam(name = "execType", value = "COMMAND_TYPE", dataType = "CommandType"),
+            @ApiImplicitParam(name = "warningType", value = "WARNING_TYPE", required = true, dataType = "WarningType"),
+            @ApiImplicitParam(name = "warningGroupId", value = "WARNING_GROUP_ID", required = true, dataType = "Int", example = "100"),
+            @ApiImplicitParam(name = "receivers", value = "RECEIVERS", dataType = "String"),
+            @ApiImplicitParam(name = "receiversCc", value = "RECEIVERS_CC", dataType = "String"),
+            @ApiImplicitParam(name = "runMode", value = "RUN_MODE", dataType = "RunMode"),
+            @ApiImplicitParam(name = "processInstancePriority", value = "PROCESS_INSTANCE_PRIORITY", required = true, dataType = "Priority"),
+            @ApiImplicitParam(name = "workerGroup", value = "WORKER_GROUP", dataType = "String", example = "default"),
+            @ApiImplicitParam(name = "timeout", value = "TIMEOUT", dataType = "Int", example = "100"),
+    })
+    @PostMapping(value = "start-process-instance-bypsname")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(START_PROCESS_INSTANCE_ERROR)
+    public Result startProcessInstanceByPsName(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                                       @ApiParam(name = "projectName", value = "PROJECT_NAME", required = true) @PathVariable String projectName,
+                                       @RequestParam(value = "processDefinitionName") String processDefinitionName,
+                                       @RequestParam(value = "scheduleTime", required = false) String scheduleTime,
+                                       @RequestParam(value = "failureStrategy", required = true) FailureStrategy failureStrategy,
+                                       @RequestParam(value = "startNodeList", required = false) String startNodeList,
+                                       @RequestParam(value = "taskDependType", required = false) TaskDependType taskDependType,
+                                       @RequestParam(value = "execType", required = false) CommandType execType,
+                                       @RequestParam(value = "warningType", required = true) WarningType warningType,
+                                       @RequestParam(value = "warningGroupId", required = false) int warningGroupId,
+                                       @RequestParam(value = "receivers", required = false) String receivers,
+                                       @RequestParam(value = "receiversCc", required = false) String receiversCc,
+                                       @RequestParam(value = "runMode", required = false) RunMode runMode,
+                                       @RequestParam(value = "processInstancePriority", required = false) Priority processInstancePriority,
+                                       @RequestParam(value = "workerGroup", required = false, defaultValue = "default") String workerGroup,
+                                       @RequestParam(value = "timeout", required = false) Integer timeout) throws ParseException {
+        logger.info("login user {}, start process instance, project name: {}, process definition id: {}, schedule time: {}, "
+                        + "failure policy: {}, node name: {}, node dep: {}, notify type: {}, "
+                        + "notify group id: {},receivers:{},receiversCc:{}, run mode: {},process instance priority:{}, workerGroup: {}, timeout: {}",
+                loginUser.getUserName(), projectName, processDefinitionName, scheduleTime,
+                failureStrategy, startNodeList, taskDependType, warningType, workerGroup, receivers, receiversCc, runMode, processInstancePriority,
+                workerGroup, timeout);
+
+        if (timeout == null) {
+            timeout = Constants.MAX_TASK_TIMEOUT;
+        }
+
+        Map<String, Object> result = execService.execProcessInstanceByPsName(loginUser, projectName, processDefinitionName, scheduleTime, execType, failureStrategy,
+                startNodeList, taskDependType, warningType,
+                warningGroupId, receivers, receiversCc, runMode, processInstancePriority, workerGroup, timeout);
+        return returnDataList(result);
+    }
+
+
 
 }

@@ -150,7 +150,7 @@ public class FileUtils {
         String mkdirLog = "create dir success " + execLocalPath;
         LoggerUtils.logInfo(Optional.ofNullable(logger), mkdirLog);
         LoggerUtils.logInfo(Optional.ofNullable(taskLoggerThreadLocal.get()), mkdirLog);
-
+/**
         //if not exists this user,then create
         OSUtils.taskLoggerThreadLocal.set(taskLoggerThreadLocal.get());
         try {
@@ -171,6 +171,7 @@ public class FileUtils {
             LoggerUtils.logError(Optional.ofNullable(taskLoggerThreadLocal.get()), e);
         }
         OSUtils.taskLoggerThreadLocal.remove();
+        */
     }
 
 
